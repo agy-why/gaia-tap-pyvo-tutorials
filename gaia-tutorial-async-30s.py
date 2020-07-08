@@ -27,18 +27,34 @@ tap_session.headers['Authorization'] = token
 tap_service = vo.dal.TAPService(url, session=tap_session)
 
 #
-# Submit the query as an asyn job
+# Submit the query as an async job
 #
+query_name = "tgas_stars"
 lang = 'PostgreSQL'
 
 query = '''
--- Orbital elements of Solar System Objects
+-- Number of TGAS stars with parallax / parallax_error > 10
 
-SELECT osc_epoch, orb_m, omega, node_omega, inclination, eccentricity, a
-FROM gdr2.aux_sso_orbits;
+SELECT COUNT(*)
+FROM gdr1.tgas_source
+  WHERE parallax / parallax_error > 10;
 '''
 
-tap_results = tap_service.run_sync(query, language=lang)
+job = tap_service.submit_job(query, language=lang, runid=query_name, queue="30s")
+job.run()
+
+#
+# Wait to be completed (or an error occurs)
+#
+job.wait(phases=["COMPLETED", "ERROR", "ABORTED"], timeout=30.)
+print('JOB {name}: {status}'.format(name=job.job.runid , status=job.phase))
+
+#
+# Fetch the results
+#
+job.raise_if_error()
+print('\nfetching the results...')
+tap_results = job.fetch_result()
 print('...DONE\n')
 
 #
