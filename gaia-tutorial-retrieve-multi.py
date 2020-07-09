@@ -70,3 +70,5 @@ try:
     assert(running_job_names == [])
 except AssertionError:
     print("The following jobs are still executing: {}".format(running_job_names))
+
+fd.close()

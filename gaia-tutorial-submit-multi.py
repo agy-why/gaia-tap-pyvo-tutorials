@@ -90,3 +90,5 @@ try:
     assert(failed == [])
 except AssertionError:
     print("The following jobs had failed: {jobs}".format(failed))
+
+fd.close()
