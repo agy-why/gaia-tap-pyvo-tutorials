@@ -11,7 +11,7 @@ import glob
 if parse_version(vo.__version__) < parse_version('1.0'):
     raise ImportError('pyvo version must be at least than 1.0')
     
-print('\npyvo version {version} \n'.format(version=vo.__version__)
+print('\npyvo version {version} \n'.format(version=vo.__version__))
 
 #
 # Setup tap_service
